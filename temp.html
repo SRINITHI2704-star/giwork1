@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Hostel Portal - Dashboard</title>
+<style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-image: url('https://media.istockphoto.com/id/1254374019/photo/a-building-with-hostel-sign-good-place-for-college-life-students.jpg?s=612x612&w=0&k=20&c=sQNvLSvRQuwePOJwRHGI-cA0rZvk5k8eF3UEN8tzQv8=');
+      background-size: cover;
+      background-position: center;
+      font-family: Arial, sans-serif;
+      color: #fff;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      backdrop-filter: brightness(0.7);
+    }
+    h1 {
+      font-size: 3rem;
+      margin-bottom: 40px;
+      text-shadow: 2px 2px 5px #000;
+    }
+    .role-btn {
+      background-color: rgba(255, 255, 255, 0.9);
+      color: #2980b9;
+      border: none;
+      padding: 15px 30px;
+      margin: 10px;
+      font-size: 18px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: 0.3s;
+      font-weight: bold;
+    }
+    .role-btn:hover {
+      background-color: #f0f0f0;
+    }
+    .container {
+      background-color: rgba(255, 255, 255, 0.95);
+      padding: 40px;
+      border-radius: 15px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+      width: 350px;
+      text-align: center;
+      display: none;
+      color: #333;
+    }
+    .container h2 {
+      color: #2980b9;
+      margin-bottom: 20px;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+    .btn {
+      background-color: #2980b9;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      margin-top: 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      width: 100%;
+    }
+    .btn:hover {
+      background-color: #216a94;
+    }
+    .toggle {
+      margin-top: 15px;
+      color: #555;
+      cursor: pointer;
+    }
+    .dashboard-container {
+      display: none;
+      height: 100vh;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      flex-direction: row;
+    }
+    .menu {
+      background-color: rgba(255, 255, 255, 0.5);
+      color: #333;
+      padding: 20px;
+      width: 250px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    }
+    .menu h2 {
+      font-family: 'Times New Roman', Times, serif;
+      font-size: 40px;
+      margin-bottom: 30px;
+      color: #216a94;
+    }
+    .menu a {
+      color: #131212;
+      text-decoration: none;
+      margin: 15px 0;
+      font-weight: bold;
+      font-size: 20px;
+      padding-left: 15px;
+      border-left: 3px solid transparent;
+      transition: all 0.3s;
+    }
+    .menu a:hover {
+      background-color: #216a94;
+      padding-left: 20px;
+      border-left: 3px solid #fff;
+      color: #fff;
+    }
+    .section {
+      background-color: rgba(255, 255, 255, 0.9);
+      border-radius: 20px;
+      padding: 30px;
+      width: 500px;
+      color: #333;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+      text-align: center;
+      margin: auto;
+      display: none;
+    }
+    .section h1, .section h2 {
+      color: #216a94;
+      margin-bottom: 20px;
+    }
+    .warden-sections {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+  </style>
+
+<style>
+.room-container {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 15px;
+  margin: 30px auto;
+  max-width: 700px;
+}
+.room {
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  font-weight: bold;
+  border-radius: 10px;
+  background-color: #e0e0e0;
+  cursor: pointer;
+  transition: 0.3s;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+.room:hover {
+  background-color: #c8e6c9;
+  transform: scale(1.05);
+}
+.room.booked {
+  background-color: #f44336;
+  color: white;
+}
+.room-details, .payment-page {
+  margin-top: 20px;
+  background-color: white;
+  padding: 20px;
+  width: 50%;
+  margin: 0 auto 30px auto;
+  border: 2px solid #ddd;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  display: none;
+}
+img.qr {
+  width: 200px;
+  margin: 20px 0;
+}
+</style>
+</head>
+<body>
+<h1>Select User Role</h1>
+<button class="role-btn" onclick="showStudentForm()">Student</button>
+<button class="role-btn" onclick="showWardenForm()">Warden</button>
+<!-- Student Form -->
+<div class="container" id="student-form-box">
+<h2 id="student-form-title">Student Login</h2>
+<form id="student-form">
+<input id="login-username" placeholder="Username" required="" type="text"/>
+<input id="login-password" placeholder="Password" required="" type="password"/>
+<button class="btn" onclick="handleStudentSubmit(event)" type="submit">Login</button>
+</form>
+<div class="toggle" onclick="toggleStudentForm()">Don't have an account? Sign up</div>
+</div>
+<!-- Warden Form -->
+<div class="container" id="warden-form-box">
+<h2 id="warden-form-title">Warden Login</h2>
+<form id="warden-form">
+<input id="warden-username" placeholder="Username" required="" type="text"/>
+<input id="warden-password" placeholder="Password" required="" type="password"/>
+<button class="btn" onclick="handleWardenSubmit(event)" type="submit">Login</button>
+</form>
+<div class="toggle" onclick="toggleWardenForm()">Don't have an account? Sign up</div>
+</div>
+<!-- Student Dashboard -->
+<div class="dashboard-container" id="student-dashboard">
+<div class="menu">
+<h2>Student Dashboard</h2>
+<a href="#" onclick="showSection('profile')">Student Profile</a>
+<a href="#" onclick="showSection('booking')">Room Booking</a>
+<a href="#" onclick="showSection('inout')">In/Out Pass</a>
+<a href="#" onclick="showSection('maintenance')">Maintenance Request</a>
+</div>
+<div class="section" id="profile">
+<h2>Student Profile</h2>
+<p><strong>Name:</strong> <span id="student-name"></span></p>
+<p><strong>Year:</strong> <span id="student-year"></span></p>
+<p><strong>Department:</strong> <span id="student-department"></span></p>
+<p><strong>Hometown:</strong> <span id="student-hometown"></span></p>
+<p><strong>Phone:</strong> <span id="student-phone"></span></p>
+</div>
+<div class="section" id="booking">
+<h2>Room Booking</h2>
+<div class="room-container" id="roomContainer"></div>
+<div class="room-details" id="roomDetails"></div>
+<div class="payment-page" id="paymentPage"></div>
+</div>
+<div class="section" id="inout">
+<div id="student-request-status" style="margin-top:20px;"></div>
+<h2>In/Out Pass Request</h2>
+<form onsubmit="handleInOutPassSubmit(event)">
+<input placeholder="Name" required="" type="text"/>
+<input placeholder="College E‑mail" required="" type="email"/>
+<input required="" type="date"/>
+<input required="" type="time"/>
+<input required="" type="date"/>
+<input required="" type="time"/>
+<input placeholder="Mother's Phone" required="" type="tel"/>
+<input placeholder="Father's Phone" required="" type="tel"/>
+<textarea placeholder="Destination" required="" rows="3"></textarea>
+<button class="btn" type="submit">Request Pass</button>
+</form>
+</div>
+<div class="section" id="maintenance">
+<h2>Maintenance Request</h2>
+<form onsubmit="handleMaintenanceSubmit(event)">
+<input placeholder="Room Number" required="" type="text"/>
+<select required="">
+<option disabled="" selected="">Select Issue</option>
+<option>Light</option>
+<option>Fan</option>
+<option>Water</option>
+<option>Others</option>
+</select>
+<textarea placeholder="Description" required="" rows="3"></textarea>
+<input placeholder="Phone Number" required="" type="tel"/>
+<button class="btn" type="submit">Submit Request</button>
+</form>
+</div>
+</div>
+<!-- Warden Dashboard -->
+<div class="dashboard-container" id="warden-dashboard">
+<div class="menu">
+<h2>Warden Dashboard</h2>
+<a href="#" onclick="showSectionWarden('inout-requests')">In/Out Pass Requests</a>
+<a href="#" onclick="showSectionWarden('maintenance-requests')">Maintenance Requests</a>
+</div>
+<div class="warden-sections">
+<div class="section" id="inout-requests">
+<div id="warden-inout-list"></div>
+<h2>In/Out Pass Requests</h2>
+<button class="btn btn-accept" onclick="handleDecision('123','approve')">Accept</button>
+<button class="btn btn-reject" onclick="handleDecision('123','reject')">Reject</button>
+</div>
+<div class="section" id="maintenance-requests">
+<h2>Maintenance Requests</h2>
+<button class="btn btn-accept" onclick="handleDecision('123','approve')">Accept</button>
+<button class="btn btn-reject" onclick="handleDecision('123','reject')">Reject</button>
+</div>
+</div>
+</div>
+<script>
+    let isStudentLogin = true;
+    let isWardenLogin  = true;
+
+    function showStudentForm() {
+      document.querySelector('h1').style.display = 'none';
+      document.querySelectorAll('.role-btn').forEach(b => b.style.display = 'none');
+      document.getElementById('student-form-box').style.display = 'block';
+    }
+    function showWardenForm() {
+      document.querySelector('h1').style.display = 'none';
+      document.querySelectorAll('.role-btn').forEach(b => b.style.display = 'none');
+      document.getElementById('warden-form-box').style.display = 'block';
+    }
+
+    function toggleStudentForm() {
+      const title = document.getElementById('student-form-title');
+      const form  = document.getElementById('student-form');
+      if (isStudentLogin) {
+        isStudentLogin = false;
+        title.innerText = 'Student Signup';
+        form.innerHTML = `
+          <input type="text" id="signup-name" placeholder="Name" required />
+          <select id="signup-year" required>
+            <option disabled selected>Select Year</option>
+            <option>I YEAR</option><option>II YEAR</option><option>III YEAR</option><option>IV YEAR</option>
+          </select>
+          <select id="signup-department" required>
+            <option disabled selected>Select Department</option>
+            <option>CSE</option><option>IT</option><option>ECE</option>
+          </select>
+          <input type="text" id="signup-hometown" placeholder="Hometown" required />
+          <input type="tel" id="signup-phone" placeholder="Phone Number" required />
+          <input type="password" id="signup-password" placeholder="Password" required />
+          <button type="submit" class="btn" onclick="handleStudentSignupSubmit(event)">Sign Up</button>
+        `;
+      } else {
+        isStudentLogin = true;
+        title.innerText = 'Student Login';
+        form.innerHTML = `
+          <input type="text" id="login-username" placeholder="Username" required />
+          <input type="password" id="login-password" placeholder="Password" required />
+          <button type="submit" class="btn" onclick="handleStudentSubmit(event)">Login</button>
+        `;
+      }
+    }
+
+    function toggleWardenForm() {
+      const title = document.getElementById('warden-form-title');
+      const form  = document.getElementById('warden-form');
+      if (isWardenLogin) {
+        isWardenLogin = false;
+        title.innerText = 'Warden Signup';
+        form.innerHTML = `
+          <input type="text" id="signup-warden-username" placeholder="Username" required />
+          <input type="password" id="signup-warden-password" placeholder="Password" required />
+          <input type="text" id="signup-warden-year" placeholder="Year of Warden" required />
+          <input type="tel" id="signup-warden-phone" placeholder="Phone Number" required />
+          <button type="submit" class="btn" onclick="handleWardenSignupSubmit(event)">Sign Up</button>
+        `;
+      } else {
+        isWardenLogin = true;
+        title.innerText = 'Warden Login';
+        form.innerHTML = `
+          <input type="text" id="warden-username" placeholder="Username" required />
+          <input type="password" id="warden-password" placeholder="Password" required />
+          <button type="submit" class="btn" onclick="handleWardenSubmit(event)">Login</button>
+        `;
+      }
+    }
+
+    // ─── Student Handlers ────────────────────────────────────────
+    function handleStudentSignupSubmit(e) {
+      e.preventDefault();
+      const studentData = {
+        name:       document.getElementById('signup-name').value,
+        year:       document.getElementById('signup-year').value,
+        department: document.getElementById('signup-department').value,
+        hometown:   document.getElementById('signup-hometown').value,
+        phone:      document.getElementById('signup-phone').value,
+        password:   document.getElementById('signup-password').value
+      };
+      localStorage.setItem('studentData', JSON.stringify(studentData));
+      alert('Signup successful! Please log in.');
+      toggleStudentForm();
+    }
+
+    function handleStudentSubmit(e) {
+      e.preventDefault();
+      const stored = JSON.parse(localStorage.getItem('studentData') || '{}');
+      const u = document.getElementById('login-username').value;
+      const p = document.getElementById('login-password').value;
+      if (stored.name === u && stored.password === p) {
+        alert('Login successful!');
+        showStudentDashboard(stored);
+      } else {
+        alert('Invalid credentials!');
+      }
+    }
+
+    function showStudentDashboard(d) {
+      document.getElementById('student-form-box').style.display = 'none';
+      document.getElementById('student-dashboard').style.display = 'flex';
+      document.getElementById('student-name').textContent       = d.name;
+      document.getElementById('student-year').textContent       = d.year;
+      document.getElementById('student-department').textContent = d.department;
+      document.getElementById('student-hometown').textContent   = d.hometown;
+      document.getElementById('student-phone').textContent      = d.phone;
+    
+  showStudentRequests();}
+
+    // ─── Warden Handlers ────────────────────────────────────────
+    function handleWardenSignupSubmit(e) {
+      e.preventDefault();
+      const w = {
+        username: document.getElementById('signup-warden-username').value,
+        password: document.getElementById('signup-warden-password').value,
+        year:     document.getElementById('signup-warden-year').value,
+        phone:    document.getElementById('signup-warden-phone').value
+      };
+      localStorage.setItem('wardenData', JSON.stringify(w));
+      alert('Warden signup successful! Please log in.');
+      toggleWardenForm();
+    }
+
+    function handleWardenSubmit(e) {
+      e.preventDefault();
+      const stored = JSON.parse(localStorage.getItem('wardenData') || '{}');
+      const u = document.getElementById('warden-username').value;
+      const p = document.getElementById('warden-password').value;
+      if (stored.username === u && stored.password === p) {
+        alert('Login successful!');
+        showWardenDashboard();
+      } else {
+        alert('Invalid credentials!');
+      }
+    }
+
+    function showWardenDashboard() {
+      document.getElementById('warden-form-box').style.display = 'none';
+      document.getElementById('warden-dashboard').style.display = 'flex';
+      showSectionWarden('inout-requests');
+    
+  loadWardenInOutRequests();}
+
+    function showSection(id) {
+      document.querySelectorAll('#student-dashboard .section').forEach(s => s.style.display = 'none');
+      document.getElementById(id).style.display = 'block';
+    }
+
+    function showSectionWarden(id) {
+      document.querySelectorAll('#warden-dashboard .warden-sections .section')
+        .forEach(s => s.style.display = 'none');
+      document.getElementById(id).style.display = 'block';
+    }
+
+    // ─── Dummy Submits ───────────────────────────────────────────
+    function handleRoomBookingSubmit(e)   { e.preventDefault(); alert('Room booked successfully!'); }
+    function handleInOutPassSubmit(e)     { e.preventDefault(); alert('In/Out pass request submitted!'); }
+    function handleMaintenanceSubmit(e)   { e.preventDefault(); alert('Maintenance request submitted!'); }
+  
+// ─── Modified In/Out Pass Submission ─────────────────────────────
+function handleInOutPassSubmit(e) {
+  e.preventDefault();
+  const request = {
+    name: document.querySelector('#inout input[placeholder="Name"]').value,
+    email: document.querySelector('#inout input[placeholder="College E‑mail"]').value,
+    fromDate: document.querySelectorAll('#inout input[type="date"]')[0].value,
+    fromTime: document.querySelectorAll('#inout input[type="time"]')[0].value,
+    toDate: document.querySelectorAll('#inout input[type="date"]')[1].value,
+    toTime: document.querySelectorAll('#inout input[type="time"]')[1].value,
+    motherPhone: document.querySelector('#inout input[placeholder="Mother\'s Phone"]').value,
+    fatherPhone: document.querySelector('#inout input[placeholder="Father\'s Phone"]').value,
+    destination: document.querySelector('#inout textarea').value,
+    status: "Pending"
+  };
+
+  let requests = JSON.parse(localStorage.getItem("inoutRequests") || "[]");
+  requests.push(request);
+  localStorage.setItem("inoutRequests", JSON.stringify(requests));
+
+  alert("In/Out pass request submitted!");
+  showStudentRequests(); // refresh list
+}
+
+// ─── Load Requests for Warden ────────────────────────────────────
+function loadWardenInOutRequests() {
+  const listDiv = document.getElementById('warden-inout-list');
+  listDiv.innerHTML = '';
+  const requests = JSON.parse(localStorage.getItem('inoutRequests') || '[]');
+
+  requests.forEach((req, index) => {
+    const card = document.createElement('div');
+    card.style.border = '1px solid #ccc';
+    card.style.borderRadius = '10px';
+    card.style.marginBottom = '10px';
+    card.style.padding = '10px';
+    card.innerHTML = `
+      <strong>${req.name}</strong> (${req.email})<br/>
+      <em>${req.fromDate} ${req.fromTime}</em> to <em>${req.toDate} ${req.toTime}</em><br/>
+      Destination: ${req.destination}<br/>
+      Status: <strong>${req.status}</strong><br/>
+      ${req.status === "Pending" ? `
+        <button onclick="updateRequestStatus(${index}, 'Accepted')" class="btn">Accept</button>
+        <button onclick="updateRequestStatus(${index}, 'Rejected')" class="btn">Reject</button>
+      ` : ''}
+    `;
+    listDiv.appendChild(card);
+  });
+}
+
+function updateRequestStatus(index, status) {
+  const requests = JSON.parse(localStorage.getItem('inoutRequests') || '[]');
+  requests[index].status = status;
+  localStorage.setItem('inoutRequests', JSON.stringify(requests));
+  loadWardenInOutRequests();
+}
+
+// ─── Student In/Out Request View ─────────────────────────────────
+function showStudentRequests() {
+  const list = document.getElementById('student-request-status');
+  list.innerHTML = '';
+  const requests = JSON.parse(localStorage.getItem('inoutRequests') || '[]');
+  const user = JSON.parse(localStorage.getItem('studentData') || '{}');
+
+  const myRequests = requests.filter(r => r.name === user.name);
+
+  myRequests.forEach(r => {
+    const div = document.createElement('div');
+    div.innerHTML = `
+      Destination: ${r.destination} <br/>
+      Date: ${r.fromDate} to ${r.toDate} <br/>
+      Status: <strong>${r.status}</strong>
+      <hr/>
+    `;
+    list.appendChild(div);
+  });
+}
+
+
+// ─── Maintenance Request Handling ───────────────────────────────
+
+function handleMaintenanceSubmit(e) {
+  e.preventDefault();
+  const request = {
+    room: document.querySelector('#maintenance input[placeholder="Room Number"]').value,
+    issue: document.querySelector('#maintenance select').value,
+    description: document.querySelector('#maintenance textarea').value,
+    phone: document.querySelector('#maintenance input[placeholder="Phone Number"]').value,
+    status: "Pending"
+  };
+
+  let requests = JSON.parse(localStorage.getItem("maintenanceRequests") || "[]");
+  requests.push(request);
+  localStorage.setItem("maintenanceRequests", JSON.stringify(requests));
+
+  alert("Maintenance request submitted!");
+}
+
+function loadWardenMaintenanceRequests() {
+  const listDiv = document.getElementById('maintenance-requests');
+  listDiv.innerHTML = '<h2>Maintenance Requests</h2>';
+  const requests = JSON.parse(localStorage.getItem('maintenanceRequests') || '[]');
+
+  requests.forEach((req, index) => {
+    const card = document.createElement('div');
+    card.style.border = '1px solid #ccc';
+    card.style.borderRadius = '10px';
+    card.style.marginBottom = '10px';
+    card.style.padding = '10px';
+    card.innerHTML = `
+      <strong>Room:</strong> ${req.room}<br/>
+      <strong>Issue:</strong> ${req.issue}<br/>
+      <strong>Description:</strong> ${req.description}<br/>
+      <strong>Phone:</strong> ${req.phone}<br/>
+      <strong>Status:</strong> ${req.status}<br/>
+      ${req.status === "Pending" ? `
+        <button onclick="updateMaintenanceStatus(${index}, 'Accepted')" class="btn">Accept</button>
+        <button onclick="updateMaintenanceStatus(${index}, 'Rejected')" class="btn">Reject</button>
+      ` : ''}
+    `;
+    listDiv.appendChild(card);
+  });
+}
+
+function updateMaintenanceStatus(index, status) {
+  const requests = JSON.parse(localStorage.getItem('maintenanceRequests') || '[]');
+  requests[index].status = status;
+  localStorage.setItem('maintenanceRequests', JSON.stringify(requests));
+  loadWardenMaintenanceRequests();
+}
+
+// Update warden dashboard function to include maintenance loader
+const originalShowWardenDashboard = showWardenDashboard;
+showWardenDashboard = function () {
+  document.getElementById('warden-form-box').style.display = 'none';
+  document.getElementById('warden-dashboard').style.display = 'flex';
+  showSectionWarden('inout-requests');
+
+  loadWardenInOutRequests();
+  loadWardenMaintenanceRequests();
+};
+
+</script>
+<script>
+const roomContainer = document.getElementById("roomContainer");
+const roomDetails = document.getElementById("roomDetails");
+const paymentPage = document.getElementById("paymentPage");
+
+let rooms = Array.from({ length: 30 }, (_, i) => ({
+  id: i + 1,
+  ac: Math.random() > 0.5,
+  washroom: Math.random() > 0.5,
+  price: Math.floor(Math.random() * 2000) + 1000,
+  booked: false,
+  slots: Math.floor(Math.random() * 4) + 1
+}));
+
+function renderRooms() {
+  roomContainer.innerHTML = "";
+  rooms.forEach((room) => {
+    const div = document.createElement("div");
+    div.className = `room ${room.booked ? "booked" : ""}`;
+    div.textContent = `${room.id}`;
+    div.onclick = () => showDetails(room.id);
+    roomContainer.appendChild(div);
+  });
+}
+
+function showDetails(id) {
+  const room = rooms.find(r => r.id === id);
+  roomDetails.style.display = "block";
+  paymentPage.style.display = "none";
+  roomDetails.innerHTML = `
+    <h2>Room ${room.id}</h2>
+    <p>AC: ${room.ac ? "Yes" : "No"}</p>
+    <p>Attached Washroom: ${room.washroom ? "Yes" : "No"}</p>
+    <p>Available Slots: ${room.slots}</p>
+    <p><strong>Price: ₹${room.price}</strong></p>
+    ${!room.booked && room.slots > 0 ? 
+      `<button onclick="showPaymentPage(${room.id})">Confirm & Pay</button>` 
+      : `<p style="color:red;"><strong>Room is fully booked</strong></p>`
+    }
+  `;
+}
+
+function showPaymentPage(id) {
+  const room = rooms.find(r => r.id === id);
+  roomDetails.style.display = "none";
+  paymentPage.style.display = "block";
+  paymentPage.innerHTML = `
+    <h2>UPI Payment for Room ${room.id}</h2>
+    <p>Scan this QR code using your UPI app to pay ₹${room.price}.</p>
+    <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=yourupi@upi&pn=HostelBooking&am=${room.price}" class="qr" alt="UPI QR Code">
+    <p>OR Pay to UPI ID: <strong>yourupi@upi</strong></p>
+    <button onclick="confirmBooking(${room.id})">Payment Done</button>
+  `;
+}
+
+function confirmBooking(id) {
+  const room = rooms.find(r => r.id === id);
+  if (room.slots > 0) {
+    room.slots -= 1;
+    if (room.slots === 0) room.booked = true;
+    alert(`Room ${room.id} booked successfully!`);
+    renderRooms();
+    roomDetails.style.display = "none";
+    paymentPage.style.display = "none";
+  }
+}
+
+renderRooms();
+</script>
+</body>
+</html>
